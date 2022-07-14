@@ -3,7 +3,7 @@ package com.example.todolist.task;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -25,7 +25,7 @@ public class Task {
     private Long id;
     private String title;
     private String description;
-    private LocalDate deadline;
+    private LocalDateTime deadline;
     @Enumerated(EnumType.STRING)
     private TaskCategory taskCategory;
 }
