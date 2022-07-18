@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping(path = "task")
 @AllArgsConstructor
 public class TaskController {
@@ -16,9 +17,9 @@ public class TaskController {
         return taskService.getTasks();
     }
 
-    @GetMapping(path = "{taskCategory}")
+    @GetMapping(path = "/{taskCategory}")
     public List<Task> getTasksByCategory(@PathVariable("taskCategory") String taskCategory) {
-        return taskService.getPendingTasks(taskCategory);
+        return taskService.getTasksByCategory(taskCategory);
     }
 
     @PostMapping

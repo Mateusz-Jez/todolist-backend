@@ -12,7 +12,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
 
     public List<Task> getTasks() {
-        return taskRepository.findAll();
+        return taskRepository.findAllByOrderByDeadlineAsc();
     }
 
     public void addTask(Task task) {
@@ -34,8 +34,8 @@ public class TaskService {
         }
     }
 
-    public List<Task> getPendingTasks(String taskCategory) {
-        return taskRepository.findAllByCategory(taskCategory);
+    public List<Task> getTasksByCategory(String taskCategory) {
+        return taskRepository.findAllByCategory(TaskCategory.valueOf(taskCategory));
     }
 
     public void editTask(Task task) {
