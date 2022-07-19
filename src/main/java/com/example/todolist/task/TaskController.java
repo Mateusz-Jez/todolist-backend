@@ -1,5 +1,6 @@
 package com.example.todolist.task;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,21 +34,35 @@ public class TaskController {
     }
 
     @DeleteMapping
-    public void deleteSelectedTasks(@RequestBody List<Long> tasksId) {
-        for(Long taskId:tasksId) {
-            taskService.deleteTask(taskId);
+    public void deleteSelectedTasks(@RequestBody String tasksId) {
+        try{
+            ObjectMapper mapper = new ObjectMapper();
+            List<Integer> list = mapper.readValue(tasksId, List.class);
+            for(Integer taskId:list) {
+                taskService.deleteTask(Long.valueOf(taskId));
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    @PutMapping(path = "/complete/{taskId}")
+    @PostMapping(path = "/complete/{taskId}")
     public void markTaskAsCompleted(@PathVariable("taskId") Long taskId) {
         taskService.markTaskAsCompleted(taskId);
     }
 
-    @PutMapping(path = "/complete")
-    public void markSelectedTasksAsCompleted(@RequestBody List<Long> tasksId) {
-        for(Long taskId:tasksId){
-            taskService.markTaskAsCompleted(taskId);
+    @PostMapping(path = "/complete")
+    public void markSelectedTasksAsCompleted(@RequestBody String tasksId) {
+        try{
+            ObjectMapper mapper = new ObjectMapper();
+            List<Integer> list = mapper.readValue(tasksId, List.class);
+            for(Integer taskId:list) {
+                taskService.markTaskAsCompleted(Long.valueOf(taskId));
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

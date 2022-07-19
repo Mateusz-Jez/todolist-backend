@@ -1,5 +1,6 @@
 package com.example.todolist.task;
 
+import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
@@ -23,9 +24,13 @@ public class Task {
             generator = "task_sequence"
     )
     private Long id;
+    @NotNull
     private String title;
+    @NotNull
     private String description;
+    @NotNull
     private LocalDateTime deadline;
+    @NotNull
     @Enumerated(EnumType.STRING)
     private TaskCategory taskCategory;
 }

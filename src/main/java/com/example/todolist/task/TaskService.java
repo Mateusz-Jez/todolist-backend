@@ -3,6 +3,8 @@ package com.example.todolist.task;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,7 +14,18 @@ public class TaskService {
     private final TaskRepository taskRepository;
 
     public List<Task> getTasks() {
-        return taskRepository.findAllByOrderByDeadlineAsc();
+        return setOverdueTasks(taskRepository.findAllByOrderByDeadlineAsc());
+    }
+
+    public List<Task> setOverdueTasks(List<Task> tasks) {
+        for(Task t:tasks) {
+            if(t.getDeadline().isBefore(LocalDateTime.now())) {
+                if(t.getTaskCategory() != TaskCategory.COMPLETED) {
+                    t.setTaskCategory(TaskCategory.OVERDUE);
+                }
+            }
+        }
+        return tasks;
     }
 
     public void addTask(Task task) {
@@ -35,7 +48,7 @@ public class TaskService {
     }
 
     public List<Task> getTasksByCategory(String taskCategory) {
-        return taskRepository.findAllByCategory(TaskCategory.valueOf(taskCategory));
+        return setOverdueTasks(taskRepository.findAllByCategory(TaskCategory.valueOf(taskCategory)));
     }
 
     public void editTask(Task task) {
