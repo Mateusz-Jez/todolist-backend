@@ -1,9 +1,12 @@
 package com.example.todolist.task;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -19,7 +22,7 @@ public class TaskController {
     }
 
     @GetMapping(path = "/{taskCategory}")
-    public List<Task> getTasksByCategory(@PathVariable("taskCategory") String taskCategory) {
+    public List<Task> getTasksByCategory(@PathVariable("taskCategory") TaskCategory taskCategory) {
         return taskService.getTasksByCategory(taskCategory);
     }
 
@@ -33,17 +36,10 @@ public class TaskController {
         taskService.deleteTask(taskId);
     }
 
-    @DeleteMapping
-    public void deleteSelectedTasks(@RequestBody String tasksId) {
-        try{
-            ObjectMapper mapper = new ObjectMapper();
-            List<Integer> list = mapper.readValue(tasksId, List.class);
-            for(Integer taskId:list) {
-                taskService.deleteTask(Long.valueOf(taskId));
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
+    @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void deleteSelectedTasks(@RequestBody Long[] tasks) {
+        for(Long taskId:tasks) {
+            taskService.deleteTask(taskId);
         }
     }
 
@@ -52,17 +48,10 @@ public class TaskController {
         taskService.markTaskAsCompleted(taskId);
     }
 
-    @PostMapping(path = "/complete")
-    public void markSelectedTasksAsCompleted(@RequestBody String tasksId) {
-        try{
-            ObjectMapper mapper = new ObjectMapper();
-            List<Integer> list = mapper.readValue(tasksId, List.class);
-            for(Integer taskId:list) {
-                taskService.markTaskAsCompleted(Long.valueOf(taskId));
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
+    @PostMapping(path = "/complete", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void markSelectedTasksAsCompleted(@RequestBody Long[] tasks) {
+        for(Long taskId:tasks) {
+            taskService.markTaskAsCompleted(taskId);
         }
     }
 

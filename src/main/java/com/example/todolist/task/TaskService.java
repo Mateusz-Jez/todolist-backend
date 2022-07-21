@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +21,7 @@ public class TaskService {
             if(t.getDeadline().isBefore(LocalDateTime.now())) {
                 if(t.getTaskCategory() != TaskCategory.COMPLETED) {
                     t.setTaskCategory(TaskCategory.OVERDUE);
+                    taskRepository.save(t);
                 }
             }
         }
@@ -47,8 +47,9 @@ public class TaskService {
         }
     }
 
-    public List<Task> getTasksByCategory(String taskCategory) {
-        return setOverdueTasks(taskRepository.findAllByCategory(TaskCategory.valueOf(taskCategory)));
+    public List<Task> getTasksByCategory(TaskCategory taskCategory) {
+        setOverdueTasks(taskRepository.findAll());
+        return taskRepository.findAllByCategory(taskCategory);
     }
 
     public void editTask(Task task) {
@@ -59,6 +60,12 @@ public class TaskService {
             editedTask.setDescription(task.getDescription());
             editedTask.setDeadline(task.getDeadline());
             editedTask.setTaskCategory(task.getTaskCategory());
+            if(editedTask.getTaskCategory() == TaskCategory.OVERDUE && editedTask.getDeadline().isAfter(LocalDateTime.now())){
+                editedTask.setTaskCategory(TaskCategory.PENDING);
+            }
+            else if(editedTask.getTaskCategory() == TaskCategory.PENDING && editedTask.getDeadline().isBefore(LocalDateTime.now())) {
+                editedTask.setTaskCategory(TaskCategory.OVERDUE);
+            }
             taskRepository.save(editedTask);
         }
     }
